@@ -51,10 +51,60 @@ class Recipe:
             )
             n_ingredients.append(new_ingredient)
         return Recipe(self.title, n_ingredients)
-    def __len__(self):
+    def __len__(self): 
         return len(self.ingredients)
     def __str__(self):
         result = self.title + "\n"
         for ingredient in self.ingredients:
             result = result + str(ingredient) + "\n"
         return result
+    
+class ShoppingList:
+    def __init__(self):
+        self._items = []
+    def add_recipe(self, recipe, portions):
+        if portions <= 0:
+            raise ValueError("Количество порций должно быть больше 0")
+        changed_recipe = recipe.scale(portions)
+        for ingredient in changed_recipe.ingredients:
+            self._items.append((ingredient, recipe.title))
+    def remove_recipe(self, title):
+        new_items = []
+        for item in self._items:
+            ingredient = item[0]
+            recipe_title = item[1]
+            if recipe_title != title:
+                new_items.append((ingredient, recipe_title))
+        self._items = new_items
+    def get_list(self):
+        rez = {}
+        for item in self._items:
+            ingredient = item[0]
+            k = (ingredient.name, ingredient.unit)
+            if k in rez:
+                rez[k] += ingredient.quantity
+            else:
+                rez[k] = ingredient.quantity
+        ingredients = []
+        for k in rez:
+            name = k[0]
+            unit = k[1]
+            quantity = rez[k]
+            ingredients.append(Ingredient(name, quantity, unit))
+        def get_ingredient_name(ingredient):
+            return ingredient.name
+        ingredients.sort(key=get_ingredient_name)
+        return ingredients
+    def __add__(self, other):
+        new_shopping_list = ShoppingList()
+        for item in self._items:
+            ingredient = item[0]
+            recipe_title = item[1]
+            new_shopping_list._items.append((ingredient, recipe_title))
+        for item in other._items:
+            ingredient = item[0]
+            recipe_title = item[1]
+            new_shopping_list._items.append((ingredient, recipe_title))
+        return new_shopping_list
+    
+    
