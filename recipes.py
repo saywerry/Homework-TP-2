@@ -119,5 +119,5 @@ class DietaryRecipe(Recipe):
             scaled_recipe.ingredients
         )
     def __str__(self):
-    recipe_text = super().__str__()
-    return "[" + self.diet_type + "] " + recipe_text
+        recipe_text = super().__str__()
+        return "[" + self.diet_type + "] " + recipe_text
